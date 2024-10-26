@@ -40,6 +40,7 @@ class Post(Base):
     title: Mapped[str_50]
     text: Mapped[str] = mapped_column(Text)
     user_id: Mapped[int] = mapped_column(ForeignKey('user.id', ondelete='CASCADE'))
+    like: Mapped[int] = mapped_column(server_default=textS("0"))
     created_at: Mapped[datetime] = mapped_column(server_default=textS("TIMEZONE('utc', now())"))
     updated_at: Mapped[datetime] = mapped_column(server_default=textS("TIMEZONE('utc', now())"), onupdate=datetime.utcnow())
 

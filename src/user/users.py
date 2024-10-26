@@ -4,6 +4,9 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from src.schemas import UserDTO, UserRelDTO
 
+
+from src.task.tasks import message
+
 def insert_user():
     with static_session() as session:
         user1 = User(username='Sasha')
@@ -60,3 +63,12 @@ def section_user_rel_api():
         res_dto = [UserRelDTO.model_validate(row, from_attributes=True) for row in res_orm]
         return f'{res_dto=}'
 
+def section_user_rel_dict():
+    with static_session() as session:
+        query = select(User).options(selectinload(User.post))
+        result = session.execute(query)
+        res_orm = result.scalars().all()
+        res_dto = [UserRelDTO.model_validate(row, from_attributes=True) for row in res_orm]
+        return message(res_dto[0].dict())
+
+print(section_user_rel_dict())

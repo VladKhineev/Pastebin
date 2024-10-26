@@ -1,9 +1,9 @@
+from sqlalchemy import select
+
 from src.database import static_engine, static_session
 from src.models import Post, Base
 from src.schemas import PostDTO, PostRelDTO
 from src.post.schemas import PostAddDTO
-
-from sqlalchemy import select
 
 
 def create_tables():

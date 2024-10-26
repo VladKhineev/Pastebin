@@ -8,6 +8,7 @@ class PostAddDTO(BaseModel):
 
 class PostDTO(PostAddDTO):
     id: int | None = None
+    like: int
     # created_ad: datetime
     # updated_ad: datetime
 
