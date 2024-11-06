@@ -4,3 +4,4 @@ uvicorn
 sqlalchemy
 alembic
 psycopg2
+asyncpg

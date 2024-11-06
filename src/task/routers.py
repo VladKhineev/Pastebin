@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from .tasks import send_email_report_dashboard
-from src.database import static_session
+from src.database import static_session, async_session
 from src.models import User
 from src.schemas import UserRelDTO
 
@@ -14,11 +14,11 @@ router = APIRouter(
 
 
 @router.get("/dashboard")
-def get_dashboard_report(user_id: int, email: str = 'vlad.khineev@gmail.com'):
+async def get_dashboard_report(user_id: int, email: str = 'vlad.khineev@gmail.com'):
     try:
-        with static_session() as session:
+        async with async_session() as session:
             user = select(User).where(User.id == user_id).options(selectinload(User.post))
-            result = session.execute(user)
+            result = await session.execute(user)
             res_orm = result.scalars().all()
             res_dto = [UserRelDTO.model_validate(row, from_attributes=True) for row in res_orm]
 

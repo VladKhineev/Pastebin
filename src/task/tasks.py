@@ -25,8 +25,12 @@ def message(data: dict):
                 for key2, value2 in d.items():
                     if key2 in keys_ignore:
                         continue
-                    res.append(f'<h3>{key2}:  ')
-                    res.append(f'{value2}</h3>\n')
+                    if key2 == 'like':
+                        res.append(f'<h3 style="color: #75e96d;">{key2}:  ')
+                        res.append(f'{value2}</h3>\n')
+                    else:
+                        res.append(f'<h3>{key2}:  ')
+                        res.append(f'{value2}</h3>\n')
                 res.append('<br>')
         else:
             res.append(f'<h2>{key}:  ')

@@ -15,7 +15,7 @@ from src.task.routers import router as router_task
 
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 
-def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI):
     redis = aioredis.from_url('redis://localhost')
     FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
     yield

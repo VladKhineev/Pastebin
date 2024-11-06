@@ -1,4 +1,5 @@
 from typing import Annotated
+import asyncio
 
 from sqlalchemy import create_engine, text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
@@ -13,13 +14,26 @@ static_engine = create_engine(
     echo=False
 )
 
+async_engine = create_async_engine(
+    # url="postgresql+psycopg2://postgres:postgres@localhost:5432/postgres",
+    url=f"postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}",
+    echo=False
+)
+
 # connection check
 # with static_engine.connect() as conn:
 #     res = conn.execute(text('select version()'))
 #     print(f'{res=}')
 
+# connection check
+# async def connect_check():
+#     async with async_engine.connect() as conn:
+#         res = await conn.execute(text('select version()'))
+#         print(f'{res=}')
 
 static_session = sessionmaker(static_engine)
+async_session = async_sessionmaker(async_engine)
+
 
 
 str_256 = Annotated[str, 256]
