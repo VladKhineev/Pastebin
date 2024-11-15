@@ -5,15 +5,15 @@ from fastapi_cache.decorator import cache
 from src.models import Post
 from src.database import static_session, async_session
 from src.post.schemas import PostDTO, PostAddDTO, PostUpdate, Pagination
-
+from pydantic import BaseModel
 
 router = APIRouter(
     prefix='/post',
     tags=['Post']
 )
 
-# @router.get('/watch')
-# def select_post(post_id: int):
+# @router.get('/t/watch')
+# def select_post_static(post_id: int):
 #     try:
 #         with static_session() as session:
 #             post = session.get(Post, post_id)
@@ -28,28 +28,46 @@ router = APIRouter(
 #         }
 #
 #
-# @router.post('/add')
-# def insert_post(new_post: PostAddDTO = Depends(PostAddDTO)):
+# @router.post('/t/add')
+# async def insert_post_static(new_post: PostAddDTO):
+#     # try:
+#     async with async_session() as session:
+#         post = Post(**new_post.dict())
+#
+#         session.add(post)
+#         await session.commit()
+#         return {
+#             'status': 'success',
+#             'data': None,
+#             'details': None,
+#         }
+#     # except Exception:
+#     #     return {
+#     #         'status': 'error',
+#     #         'data': None,
+#     #         'details': None,
+#     #     }
+#
+# @router.get('/t/watch_all')
+# @cache(expire=30)
+# def select_post_all_static(lemit: Pagination, skip: int = 0):
 #     try:
 #         with static_session() as session:
-#             post = Post(**new_post.dict())
+#             posts = select(Post)
+#             res = session.execute(posts)
+#             result = res.scalars().all()
+#             return result[lemit * skip:lemit + (skip * lemit)]
 #
-#             session.add(post)
-#             session.commit()
-#             return {
-#                 'status': 'success',
-#                 'data': None,
-#                 'details': None,
-#             }
-#     except Exception:
+#     except Exception as er:
+#         print(er)
 #         return {
 #             'status': 'error',
 #             'data': None,
 #             'details': None,
 #         }
 #
-# @router.patch('/like')
-# def add_like_post(post_id: int):
+# @router.patch('/t/like')
+# def add_like_post_static(post_id: int):
 #     try:
 #         with static_session() as session:
 #             post = session.get(Post, post_id)
@@ -64,26 +82,10 @@ router = APIRouter(
 #             'data': None,
 #             'details': None,
 #         }
-# @router.get('/watch_all')
-# @cache(expire=30)
-# def select_post():
-#     try:
-#         with static_session() as session:
-#             posts = select(Post)
-#             res = session.execute(posts)
-#             result = res.scalars().all()
-#             return result
-#     except Exception as er:
-#         print(er)
-#         return {
-#             'status': 'error',
-#             'data': None,
-#             'details': None,
-#         }
 #
 #
-# @router.put('/update')
-# def update_all_dep_post(post_id: int, new_post: PostUpdate = Depends(PostUpdate)):
+# @router.put('/t/update')
+# def update_all_dep_post_static(post_id: int, new_post: PostUpdate = Depends(PostUpdate)):
 #     try:
 #         with static_session() as session:
 #             post = session.get(Post, post_id)
@@ -104,8 +106,8 @@ router = APIRouter(
 #         }
 #
 #
-# @router.patch('/update')
-# def update_all_post(post_id: int, new_post: PostUpdate = Depends(PostUpdate)):
+# @router.patch('/t/update')
+# def update_all_post_static(post_id: int, new_post: PostUpdate = Depends(PostUpdate)):
 #     try:
 #         with static_session() as session:
 #             post = session.get(Post, post_id)
@@ -135,8 +137,8 @@ router = APIRouter(
 #             'details': None,
 #         }
 #
-# @router.delete('/delete')
-# def delete_post(post_id: int):
+# @router.delete('/t/delete')
+# def delete_post_static(post_id: int):
 #     try:
 #         with static_session() as session:
 #             post = session.get(Post, post_id)
@@ -159,26 +161,9 @@ router = APIRouter(
 #--------------------------------------------------------------------------asynchronously
 
 
-@router.get('/watch')
-async def select_post(post_id: int):
-    try:
-        async with async_session() as session:
-            post = await session.get(Post, post_id)
-            # res = PostDTO.model_validate(post, from_attributes=True)
-
-            return post
-
-    except Exception as er:
-        print(er)
-        return {
-            'status': 'error',
-            'data': None,
-            'details': None,
-        }
-
 
 @router.post('/add')
-async def insert_post(new_post: PostAddDTO = Depends(PostAddDTO)):
+async def insert_post(new_post: PostAddDTO = Depends(PostAddDTO)): # = Depends(PostAddDTO)
     try:
         async with async_session() as session:
             post = Post(**new_post.dict())
@@ -198,15 +183,35 @@ async def insert_post(new_post: PostAddDTO = Depends(PostAddDTO)):
             'data': None,
             'details': None,
         }
+
+
+@router.get('/watch')
+async def select_post(post_id: int):
+    try:
+        async with async_session() as session:
+            post = await session.get(Post, post_id)
+            # res = PostDTO.model_validate(post, from_attributes=True)
+
+            return post
+
+    except Exception as er:
+        print(er)
+        return {
+            'status': 'error',
+            'data': None,
+            'details': None,
+        }
+
+
 @router.get('/watch_all')
 @cache(expire=30)
-async def select_post(lemit: Pagination, skip: int = 0):
+async def select_post_all(limit: Pagination, skip: int = 0):
     try:
         async with async_session() as session:
             posts = select(Post)
             res = await session.execute(posts)
             result = res.scalars().all()
-            return result[lemit * skip:lemit + (skip * lemit)]
+            return result[limit * skip:limit + (skip * limit)]
 
     except Exception as er:
         print(er)
@@ -245,7 +250,7 @@ async def add_like_post(post_id: int):
         }
 
 @router.put('/update')
-async def update_all_dep_post(post_id: int, new_post: PostUpdate = Depends(PostUpdate)):
+async def update_all_dep_post(post_id: int, new_post: PostUpdate = Depends(PostUpdate)): # = Depends(PostUpdate)
     try:
         async with async_session() as session:
             post = await session.get(Post, post_id)
@@ -276,7 +281,7 @@ async def update_all_dep_post(post_id: int, new_post: PostUpdate = Depends(PostU
         }
 
 @router.patch('/update')
-async def update_all_post(post_id: int, new_post: PostUpdate = Depends(PostUpdate)):
+async def update_all_post(post_id: int, new_post: PostUpdate = Depends(PostUpdate)): # = Depends(PostUpdate)
     try:
         async with async_session() as session:
             post = await session.get(Post, post_id)

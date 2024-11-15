@@ -2,7 +2,7 @@ from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, relationship
 from sqlalchemy import ForeignKey, String, Text
 from sqlalchemy import text as textS
 from typing import Annotated
-from datetime import datetime
+from datetime import datetime, UTC
 
 intpk = Annotated[int, mapped_column(primary_key=True)]
 str_50 = Annotated[str, 50]

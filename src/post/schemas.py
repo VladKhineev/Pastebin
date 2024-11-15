@@ -18,8 +18,8 @@ class PostDTO(PostAddDTO):
 
 
 class PostUpdate(BaseModel):
-    title: str | None = None
-    text: str | None = None
+    title: str | None = Field(default=None, min_length=4, max_length=10)
+    text: str | None = Field(default=None, max_length=500)
 
 
 class Pagination(int, Enum):

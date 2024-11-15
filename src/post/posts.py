@@ -7,10 +7,8 @@ from src.post.schemas import PostAddDTO
 
 
 def create_tables():
-    static_engine.echo = False
     Base.metadata.drop_all(static_engine)
     Base.metadata.create_all(static_engine)
-    static_engine.echo = False
 
 
 def insert_post():
@@ -45,5 +43,3 @@ def select_post_one(post_id: int):
             print(post)
             res = PostDTO.model_validate(post, from_attributes=True)
             return res
-
-print(select_post_one(9))

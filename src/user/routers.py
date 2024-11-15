@@ -86,29 +86,10 @@ router = APIRouter(
 ##--------------------------------------------------------------------------asynchronously
 
 
-
-
-
-@router.get('/{user_id}', response_model=list[UserRelDTO])
-async def section_user_and_post(user_id: int):
+@router.post('/add')
+async def add_user(new_user: UserAddDTO= Depends(UserAddDTO)): # = Depends(UserAddDTO)
     try:
         async with async_session() as session:
-            user = select(User).where(User.id == user_id).options(selectinload(User.post))
-            result = await session.execute(user)
-            res_orm = result.scalars().all()
-            res_dto = [UserRelDTO.model_validate(row, from_attributes=True) for row in res_orm]
-            return res_dto
-    except Exception:
-        return {
-            'status': 'error',
-            'data': None,
-            'details': None,
-    }
-
-@router.post('/add')
-async def add_user(new_user: UserDTO = Depends(UserAddDTO)):
-    try:
-        async with (async_session() as session):
             user = User(**new_user.dict())
 
             session.add(user)
@@ -127,6 +108,21 @@ async def add_user(new_user: UserDTO = Depends(UserAddDTO)):
             'details': None,
     }
 
+@router.get('/{user_id}', response_model=list[UserRelDTO])
+async def section_user_and_post(user_id: int):
+    try:
+        async with async_session() as session:
+            user = select(User).where(User.id == user_id).options(selectinload(User.post))
+            result = await session.execute(user)
+            res_orm = result.scalars().all()
+            res_dto = [UserRelDTO.model_validate(row, from_attributes=True) for row in res_orm]
+            return res_dto
+    except Exception:
+        return {
+            'status': 'error',
+            'data': None,
+            'details': None,
+    }
 
 @router.delete('/delete')
 async def delete_post(user_id: int):
