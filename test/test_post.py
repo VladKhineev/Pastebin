@@ -1,8 +1,6 @@
 import pytest
 from httpx import AsyncClient
-from conftest import client
 
-from src.post.routers import select_post, insert_post
 
 @pytest.mark.parametrize(
     'title, text, user_id, post_id',

@@ -1,8 +1,5 @@
 import pytest
-from conftest import client
 from httpx import AsyncClient
-
-
 
 
 @pytest.mark.parametrize(
