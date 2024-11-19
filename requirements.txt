@@ -10,3 +10,8 @@ pytest
 pytest-asyncio
 pytest-dotenv
 httpx
+redis
+fastapi-cache2
+celery
+flower
+gunicorn

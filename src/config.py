@@ -11,6 +11,7 @@ DB_USER = os.environ.get("DB_USER")
 DB_PASS = os.environ.get("DB_PASS")
 
 REDIS_HOST = os.environ.get("REDIS_HOST")
+REDIS_PORT = os.environ.get("REDIS_PORT")
 
 GO_USER = os.environ.get("GOOGLE_USER")
 GO_PASS = os.environ.get("GOOGLE_PASS")

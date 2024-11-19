@@ -3,12 +3,12 @@ from email.message import EmailMessage
 
 from celery import Celery
 
-from src.config import GO_PASS, GO_USER
+from src.config import GO_PASS, GO_USER, REDIS_HOST, REDIS_PORT
 
 GO_HOST = 'smtp.gmail.com'
 GO_PORT = 465
 
-celery = Celery('tasks', broker='redis://localhost:6379')
+celery = Celery('tasks', broker=f'redis://{REDIS_HOST}:{REDIS_PORT}')
 
 def message(data: dict):
     '''Создает внутренность посылки(Страничка пользователя)'''
