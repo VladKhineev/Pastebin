@@ -2,7 +2,6 @@ from pydantic import BaseModel, Field
 from enum import Enum
 
 class PostAddDTO(BaseModel):
-    '''Схема для пользователя'''
     title: str = Field(min_length=4, max_length=10)
     text: str = Field(max_length=500)
     user_id: int
@@ -13,7 +12,6 @@ class PostDTO(PostAddDTO):
 
 
 class PostUpdate(BaseModel):
-    '''Схема для пользователя'''
     title: str | None = Field(default=None, min_length=4, max_length=10)
     text: str | None = Field(default=None, max_length=500)
 

@@ -4,8 +4,8 @@ from sqlalchemy import text as textS
 from typing import Annotated
 from datetime import datetime, UTC
 
-intpk = Annotated[int, mapped_column(primary_key=True)] # Для id
-str_50 = Annotated[str, 50] # Для названий
+intpk = Annotated[int, mapped_column(primary_key=True)]# Для id
+str_50 = Annotated[str, 50]# Для названий
 
 class Base(DeclarativeBase):
     '''Главный класс, по которому строится все остальные классы(таблицы в sqlalchemy)'''
@@ -13,9 +13,9 @@ class Base(DeclarativeBase):
         str_50: String(50)
     }
 
-    repr_cols_num = 6 # Кол-во столбцов вывода
+    repr_cols_num = 6
     repr_cols = tuple()
-    # Преобразует данные sqlalchemy в красивый и понятный вид
+
     def __repr__(self):
         """Relationships не используются в repr(), т.к. могут вести к неожиданным подгрузкам"""
         cols = []
@@ -33,7 +33,7 @@ class User(Base):
     id: Mapped[intpk]
     username: Mapped[str_50]
 
-    post: Mapped[list['Post']] = relationship(back_populates='user') # Связь с таблицей post
+    post: Mapped[list['Post']] = relationship(back_populates='user')
 
 class Post(Base):
     __tablename__ = 'post'
@@ -46,4 +46,4 @@ class Post(Base):
     created_at: Mapped[datetime] = mapped_column(server_default=textS("TIMEZONE('utc', now())"))
     updated_at: Mapped[datetime] = mapped_column(server_default=textS("TIMEZONE('utc', now())"), onupdate=datetime.utcnow())
 
-    user: Mapped['User'] = relationship(back_populates='post') # Связь с таблицей user
+    user: Mapped['User'] = relationship(back_populates='post')
